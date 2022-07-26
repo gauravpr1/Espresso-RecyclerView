@@ -44,12 +44,11 @@ public class ScrollTest {
         Thread.sleep(5000);
 
        int count = getRecyclerViewCount(withId(R.id.dog_breed_recycler_view)); // No of items in Recycler View
-        Log.d("Booking Recycler Cnt", String.valueOf(count));
+        Log.d("Recycler Cnt", String.valueOf(count));
         for(int i=0;i<count;i++){
             Thread.sleep(2000);
-            onView(withIndex(withId(R.id.dog_breed_recycler_view), 0)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(withId(R.id.dog_breed_recycler_view)).perform(RecyclerViewActions.scrollToPosition(i));
             //Thread.sleep(2000);
-
         }
 
     }
@@ -57,38 +56,24 @@ public class ScrollTest {
     public void scroll_to_specific_position() throws InterruptedException {
         Thread.sleep(5000);
         // scrolling to position 20
-        onView(withIndex(withId(R.id.dog_breed_recycler_view), 0)).perform(RecyclerViewActions.scrollToPosition(20));
+        onView(withId(R.id.dog_breed_recycler_view)).perform(RecyclerViewActions.scrollToPosition(20));
+
         Thread.sleep(5000);
     }
 
     @Test
     public void scroll_nclickItem() throws InterruptedException {
+        int count = getRecyclerViewCount(withId(R.id.dog_breed_recycler_view)); // No of items in Recycler View
         // click and scroll all items of the recycler view
-        for(int i=0;i<96;i++){
+        for(int i=0;i<count;i++){
             Thread.sleep(2000);
             onView(withId(R.id.dog_breed_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(i, click()));
-            onView(withIndex(withId(R.id.dog_breed_recycler_view), 0)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(withId(R.id.dog_breed_recycler_view)).perform(RecyclerViewActions.scrollToPosition(i));
             Thread.sleep(2000);
             Espresso.pressBack();
         }
     }
-    public static Matcher<View> withIndex(final Matcher<View> matcher, final int index) {
-        return new TypeSafeMatcher<View>() {
-            int currentIndex = 0;
 
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with index: ");
-                description.appendValue(index);
-                matcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                return matcher.matches(view) && currentIndex++ == index;
-            }
-        };
-    }
     public static int getRecyclerViewCount(Matcher matcher) {
         final int[] num = new int[1];
         onView(Matchers.allOf(matcher, isEnabled())).check(matches(new TypeSafeMatcher<View>() {
